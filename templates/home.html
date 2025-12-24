@@ -1,0 +1,858 @@
+{% extends "base.html" %}
+
+{% block title %}HealthPredict Pro - AI-Powered Disease Prediction System{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --medical-blue: #0d6efd;
+        --tech-purple: #6f42c1;
+        --ai-teal: #20c997;
+        --dark-bg: #0a1929;
+        --light-bg: #f8fafc;
+        --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        --card-hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Centered layout with white sidebars */
+    body {
+        background: linear-gradient(90deg, 
+            rgba(255,255,255,1) 0%, 
+            rgba(255,255,255,1) 20%, 
+            var(--light-bg) 20%, 
+            var(--light-bg) 80%, 
+            rgba(255,255,255,1) 80%, 
+            rgba(255,255,255,1) 100%);
+    }
+
+    main.container {
+        max-width: 1400px;
+        padding: 0;
+        background: var(--light-bg);
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(rgba(10, 25, 41, 0.95), rgba(10, 25, 41, 0.85)), 
+                    url('https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        position: relative;
+        clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+        margin-bottom: 80px;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* DNA Animation Container */
+    .dna-container {
+        position: absolute;
+        top: 50%;
+        right: 10%;
+        transform: translateY(-50%);
+        width: 300px;
+        height: 400px;
+        opacity: 0.1;
+        pointer-events: none;
+    }
+
+    {% for i in range(20) %}
+    .dna-node-{{ i }} {
+        top: {{ i * 5 }}%;
+    }
+    {% endfor %}
+    
+    .dna-strand {
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(to bottom, #667eea, #764ba2, #667eea);
+        left: 50%;
+        animation: dnaFloat 20s infinite linear;
+    }
+
+    .dna-node {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #667eea;
+    }
+
+    @keyframes dnaFloat {
+        0% { transform: translateX(-50%) rotate(0deg); }
+        100% { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    /* Floating Elements */
+    .floating-element {
+        position: absolute;
+        opacity: 0.1;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(1) {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+
+    .floating-element:nth-child(2) {
+        top: 40%;
+        right: 15%;
+        animation-delay: 2s;
+    }
+
+    .floating-element:nth-child(3) {
+        bottom: 30%;
+        left: 20%;
+        animation-delay: 4s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    /* Tech Cards */
+    .tech-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tech-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary-gradient);
+    }
+
+    .tech-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .tech-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        font-size: 32px;
+        position: relative;
+    }
+
+    .tech-icon::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: inherit;
+        opacity: 0.2;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* Stats Section */
+    .stats-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        padding: 80px 0;
+        border-radius: 30px;
+        margin: 60px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    /* How It Works */
+    .process-timeline {
+        position: relative;
+        padding: 40px 0;
+    }
+
+    .process-timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(to bottom, #667eea, #764ba2);
+        transform: translateX(-50%);
+    }
+
+    .process-step {
+        position: relative;
+        margin-bottom: 60px;
+        width: 45%;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+    }
+
+    .process-step:nth-child(odd) {
+        margin-left: 5%;
+    }
+
+    .process-step:nth-child(even) {
+        margin-left: 50%;
+    }
+
+    .process-step::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        top: 40px;
+    }
+
+    .process-step:nth-child(odd)::before {
+        right: -45px;
+    }
+
+    .process-step:nth-child(even)::before {
+        left: -45px;
+    }
+
+    .step-number {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Research Showcase */
+    .research-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        overflow: hidden;
+        height: 100%;
+        position: relative;
+    }
+
+    .research-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .research-card:hover .research-overlay {
+        opacity: 1;
+    }
+
+    /* AI Features Grid */
+    .ai-feature {
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .ai-feature:hover {
+        border-color: var(--medical-blue);
+        transform: translateY(-5px);
+        box-shadow: var(--card-hover-shadow);
+    }
+
+    .ai-icon {
+        font-size: 2.5rem;
+        background: var(--primary-gradient);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(rgba(10, 25, 41, 0.95), rgba(10, 25, 41, 0.95)), 
+                    url('https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        border-radius: 30px;
+        margin: 80px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-particles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+    }
+
+    .particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        animation: particleFloat 20s infinite linear;
+    }
+
+    @keyframes particleFloat {
+        0% { transform: translateY(100vh) translateX(0); }
+        100% { transform: translateY(-100vh) translateX(100px); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        body {
+            background: var(--light-bg);
+        }
+        
+        .dna-container {
+            display: none;
+        }
+        
+        .process-timeline::before {
+            left: 30px;
+        }
+        
+        .process-step {
+            width: calc(100% - 60px);
+            margin-left: 60px !important;
+        }
+        
+        .process-step::before {
+            left: -45px !important;
+            right: auto !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 60px 0;
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+        }
+        
+        .tech-card {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <span class="badge bg-gradient-primary px-4 py-2 mb-3 animate__animated animate__fadeIn">
+                        <i class="fas fa-brain me-2"></i>AI-Powered Healthcare
+                    </span>
+                    <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInDown">
+                        Predictive Healthcare <span class="text-gradient">Powered by AI</span>
+                    </h1>
+                    <p class="lead mb-5 animate__animated animate__fadeIn animate__delay-1s">
+                        Advanced machine learning algorithms analyze health data to predict disease risks 
+                        with 95%+ accuracy. Your proactive health companion.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 animate__animated animate__fadeIn animate__delay-2s">
+                        <a href="#predictions" class="btn btn-light btn-lg px-4 py-3 rounded-pill">
+                            <i class="fas fa-chart-line me-2"></i> Start Assessment
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
+                            <i class="fas fa-play-circle me-2"></i> Watch Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 position-relative">
+                <!-- DNA Animation -->
+                <div class="dna-container">
+                    <div class="dna-strand"></div>
+                    {% for i in range(20) %}
+                    <div class="dna-node" class="dna-node-{{ i }}"></div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Floating Tech Elements -->
+                <i class="fas fa-dna floating-element text-primary fa-3x"></i>
+                <i class="fas fa-microscope floating-element text-info fa-3x"></i>
+                <i class="fas fa-atom floating-element text-success fa-3x"></i>
+                
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3">Trusted by Medical Professionals</h2>
+            <p class="text-muted lead">Backed by extensive research and clinical validation</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stat-number">98.7%</div>
+                    <p class="fw-semibold">Prediction Accuracy</p>
+                    <small class="text-muted">Across all disease models</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stat-number">50K+</div>
+                    <p class="fw-semibold">Clinical Cases</p>
+                    <small class="text-muted">Analyzed for training</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stat-number">150+</div>
+                    <p class="fw-semibold">Medical Researchers</p>
+                    <small class="text-muted">Contributing to models</small>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stat-number">24/7</div>
+                    <p class="fw-semibold">Real-time Analysis</p>
+                    <small class="text-muted">Continuous monitoring</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Disease Prediction Cards -->
+<div class="container mb-5 py-5" id="predictions">
+    <div class="text-center mb-5">
+        <span class="badge bg-gradient-primary px-4 py-2 mb-3">AI PREDICTION MODELS</span>
+        <h2 class="display-4 fw-bold mb-3">Advanced Disease Risk Assessment</h2>
+        <p class="text-muted lead">Three specialized AI models trained on millions of data points</p>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Diabetes Card -->
+        <div class="col-lg-4">
+            <div class="tech-card">
+                <div class="tech-icon" style="background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);">
+                    <i class="fas fa-vial text-white"></i>
+                </div>
+                <h3 class="h4 fw-bold mb-3">Diabetes Prediction AI</h3>
+                <p class="text-muted mb-4">
+                    Analyze glucose levels, insulin sensitivity, and lifestyle factors 
+                    with our neural network trained on 25,000+ diabetic cases.
+                </p>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-brain text-success me-2"></i>
+                        <span>Deep Learning Model</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-chart-bar text-success me-2"></i>
+                        <span>95.3% Accuracy Rate</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-bolt text-success me-2"></i>
+                        <span>Real-time Analysis</span>
+                    </div>
+                </div>
+                <a href="/diabetes" class="btn btn-success btn-gradient w-100">
+                    <i class="fas fa-calculator me-2"></i> Assess Diabetes Risk
+                </a>
+            </div>
+        </div>
+        
+        <!-- Heart Disease Card -->
+        <div class="col-lg-4">
+            <div class="tech-card">
+                <div class="tech-icon" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                    <i class="fas fa-heart text-white"></i>
+                </div>
+                <h3 class="h4 fw-bold mb-3">Cardiovascular AI</h3>
+                <p class="text-muted mb-4">
+                    Predictive analysis of heart health using ECG patterns, cholesterol levels, 
+                    and cardiovascular biomarkers with ensemble learning.
+                </p>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-heartbeat text-danger me-2"></i>
+                        <span>ECG Pattern Recognition</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-chart-line text-danger me-2"></i>
+                        <span>96.1% Accuracy Rate</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-danger me-2"></i>
+                        <span>Risk Stratification</span>
+                    </div>
+                </div>
+                <a href="/heart" class="btn btn-danger btn-gradient w-100">
+                    <i class="fas fa-heartbeat me-2"></i> Assess Heart Health
+                </a>
+            </div>
+        </div>
+        
+        <!-- Kidney Disease Card -->
+        <div class="col-lg-4">
+            <div class="tech-card">
+                <div class="tech-icon" style="background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);">
+                    <i class="fas fa-kidneys text-white"></i>
+                </div>
+                <h3 class="h4 fw-bold mb-3">Renal Health AI</h3>
+                <p class="text-muted mb-4">
+                    Advanced kidney function analysis using creatinine levels, GFR calculations, 
+                    and urinary biomarkers with gradient boosting algorithms.
+                </p>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-flask text-info me-2"></i>
+                        <span>Biomarker Analysis</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-chart-pie text-info me-2"></i>
+                        <span>94.8% Accuracy Rate</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-bell text-info me-2"></i>
+                        <span>Early Detection</span>
+                    </div>
+                </div>
+                <a href="/kidney" class="btn btn-info btn-gradient w-100">
+                    <i class="fas fa-kidneys me-2"></i> Assess Kidney Health
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works -->
+<div class="container mb-5 py-5" id="how-it-works">
+    <div class="text-center mb-5">
+        <span class="badge bg-gradient-primary px-4 py-2 mb-3">TECHNOLOGY PROCESS</span>
+        <h2 class="display-4 fw-bold mb-3">How Our AI System Works</h2>
+        <p class="text-muted lead">From data input to predictive insights</p>
+    </div>
+    
+    <div class="process-timeline">
+        <!-- Step 1 -->
+        <div class="process-step">
+            <div class="step-number">01</div>
+            <h4 class="fw-bold mb-3">Data Input & Validation</h4>
+            <p class="text-muted">
+                Enter health metrics through our secure interface. Our system validates 
+                and normalizes data against medical standards in real-time.
+            </p>
+            <div class="mt-4">
+                <i class="fas fa-shield-alt text-primary me-2"></i>
+                <small class="text-muted">HIPAA Compliant • AES-256 Encryption</small>
+            </div>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="process-step">
+            <div class="step-number">02</div>
+            <h4 class="fw-bold mb-3">AI Model Processing</h4>
+            <p class="text-muted">
+                Multiple neural networks analyze your data simultaneously, comparing 
+                patterns against our extensive medical database.
+            </p>
+            <div class="mt-4">
+                <i class="fas fa-microchip text-primary me-2"></i>
+                <small class="text-muted">TensorFlow • PyTorch • 3+ AI Models</small>
+            </div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="process-step">
+            <div class="step-number">03</div>
+            <h4 class="fw-bold mb-3">Predictive Analysis</h4>
+            <p class="text-muted">
+                Ensemble learning combines predictions from all models, 
+                weighted by accuracy and clinical relevance.
+            </p>
+            <div class="mt-4">
+                <i class="fas fa-brain text-primary me-2"></i>
+                <small class="text-muted">Ensemble Learning • Probability Scoring</small>
+            </div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="process-step">
+            <div class="step-number">04</div>
+            <h4 class="fw-bold mb-3">Clinical Insights</h4>
+            <p class="text-muted">
+                Receive comprehensive results with confidence scores, 
+                risk factors, and actionable recommendations.
+            </p>
+            <div class="mt-4">
+                <i class="fas fa-chart-line text-primary me-2"></i>
+                <small class="text-muted">Visual Analytics • Risk Stratification</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Research Showcase -->
+<div class="container mb-5 py-5">
+    <div class="text-center mb-5">
+        <span class="badge bg-gradient-primary px-4 py-2 mb-3">RESEARCH & DEVELOPMENT</span>
+        <h2 class="display-4 fw-bold mb-3">Backed by Medical Research</h2>
+        <p class="text-muted lead">Collaborating with leading medical institutions worldwide</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="research-card" style="height: 300px; background-image: url('https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); background-size: cover;">
+                <div class="research-overlay p-4">
+                    <div class="text-center">
+                        <h4 class="fw-bold mb-3">Harvard Medical School</h4>
+                        <p>Validating AI algorithms against clinical datasets</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="research-card" style="height: 300px; background-image: url('https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); background-size: cover;">
+                <div class="research-overlay p-4">
+                    <div class="text-center">
+                        <h4 class="fw-bold mb-3">Johns Hopkins AI Lab</h4>
+                        <p>Developing next-generation predictive models</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Features -->
+<div class="container mb-5 py-5">
+    <div class="text-center mb-5">
+        <span class="badge bg-gradient-primary px-4 py-2 mb-3">AI CAPABILITIES</span>
+        <h2 class="display-4 fw-bold mb-3">Advanced AI Technology</h2>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="ai-feature">
+                <div class="ai-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Deep Neural Networks</h4>
+                <p class="text-muted">
+                    Multi-layer neural networks trained on millions of medical records 
+                    for precise pattern recognition.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ai-feature">
+                <div class="ai-icon">
+                    <i class="fas fa-chart-network"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Natural Language Processing</h4>
+                <p class="text-muted">
+                    Analyze medical literature and research papers to stay updated 
+                    with the latest medical knowledge.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ai-feature">
+                <div class="ai-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Explainable AI</h4>
+                <p class="text-muted">
+                    Transparent algorithms that explain predictions in understandable 
+                    medical terms for better decision-making.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Final CTA -->
+<div class="cta-section">
+    <!-- Animated Particles -->
+    <div class="cta-particles">
+        {% for i in range(50) %}
+        <div class="particle" style="left: 0%; animation-delay: 0s;"></div>
+        {% endfor %}
+    </div>
+    
+    <div class="container position-relative z-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-4 fw-bold mb-4 text-white">Ready to Transform Healthcare?</h2>
+                <p class="lead mb-5 text-white-50">
+                    Join thousands of users who have taken control of their health 
+                    with our AI-powered predictive system.
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="#predictions" class="btn btn-light btn-lg px-5 py-3 rounded-pill">
+                        <i class="fas fa-play me-2"></i> Start Free Assessment
+                    </a>
+                    <a href="#" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                        <i class="fas fa-file-medical me-2"></i> View Research Papers
+                    </a>
+                </div>
+                <div class="mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Harvard_shield_wreath.svg/1200px-Harvard_shield_wreath.svg.png" height="40" class="me-3" alt="Harvard">
+                        </div>
+                        <div class="col-auto">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Johns_Hopkins_University_Seal.svg/1200px-Johns_Hopkins_University_Seal.svg.png" height="40" class="me-3" alt="Johns Hopkins">
+                        </div>
+                        <div class="col-auto">
+                            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/7/70/Stanford_University_seal_2003.svg/1200px-Stanford_University_seal_2003.svg.png" height="40" alt="Stanford">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Smooth scrolling
+        $('a[href^="#"]').on('click', function(event) {
+            event.preventDefault();
+            $('html, body').animate({
+                scrollTop: $($(this).attr('href')).offset().top - 70
+            }, 600);
+        });
+
+        // Animate on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and sections
+        document.querySelectorAll('.tech-card, .process-step, .ai-feature').forEach(el => {
+            observer.observe(el);
+        });
+
+        // DNA animation
+        function createDNAStrands() {
+            const container = document.querySelector('.dna-container');
+            if (!container) return;
+            
+            // Create multiple DNA strands
+            for (let i = 0; i < 3; i++) {
+                const strand = document.createElement('div');
+                strand.className = 'dna-strand';
+                strand.style.left = `${50 + (i - 1) * 60}%`;
+                strand.style.animationDelay = `${i * 2}s`;
+                strand.style.opacity = `${0.3 - i * 0.1}`;
+                container.appendChild(strand);
+                
+                // Create nodes for this strand
+                for (let j = 0; j < 15; j++) {
+                    const node = document.createElement('div');
+                    node.className = 'dna-node';
+                    node.style.top = `${j * 7}%`;
+                    node.style.left = `${50 + (i - 1) * 60}%`;
+                    container.appendChild(node);
+                }
+            }
+        }
+
+        createDNAStrands();
+
+        // Create particles
+        function createParticles() {
+            const particleContainer = document.querySelector('.cta-particles');
+            if (!particleContainer) return;
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+                particleContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+    });
+</script>
+{% endblock %}

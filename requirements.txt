@@ -1,0 +1,10 @@
+flask
+numpy
+pandas
+matplotlib
+langchain
+openai
+fastapi
+google-generativeai
+python-dotenv
+requests

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health AI Assistant - Chatbot</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --bot-bg: #f8f9fa;
+            --user-bg: #667eea;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .chatbot-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .logo-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        /* Capabilities Grid */
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .capability-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .capability-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .capability-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        /* Quick Questions */
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .quick-btn {
+            background: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* Messages */
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 1rem 1.5rem;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background: var(--bot-bg);
+            color: #334155;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+        }
+        
+        .message-time {
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+        
+        .message-content {
+            line-height: 1.6;
+        }
+        
+        .message-content strong {
+            color: #1e293b;
+        }
+        
+        .message-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .message-content li {
+            margin-bottom: 0.25rem;
+        }
+        
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem 0;
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .file-upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* Input Area */
+        .input-area {
+            padding: 1.5rem 2rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .file-upload-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .file-upload-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .message-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 10px 15px;
+            background: #f1f5f9;
+            border-radius: 18px;
+            width: fit-content;
+            align-self: flex-start;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        /* Features Menu */
+        .features-menu {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .feature-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .feature-btn .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            margin-bottom: 5px;
+        }
+        
+        .feature-btn:hover .tooltip {
+            opacity: 1;
+        }
+        
+        /* Disclaimer */
+        .disclaimer {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: #92400e;
+            border: 1px solid #fbbf24;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .back-button:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .chatbot-container {
+                height: 95vh;
+                border-radius: 15px;
+            }
+            
+            .chat-header {
+                padding: 1rem;
+            }
+            
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.3rem;
+            }
+            
+            .chat-area {
+                padding: 1rem;
+            }
+            
+            .capabilities-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .input-area {
+                padding: 1rem;
+            }
+            
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Scrollbar Styling */
+        .chat-area::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-area::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .chat-area::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .chat-area::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="/" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="chatbot-container">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Health AI Assistant</h1>
+                    <p>Your intelligent health companion powered by Gemini AI</p>
+                </div>
+            </div>
+            <div class="features-badges">
+                <span class="badge bg-light text-dark me-2">
+                    <i class="fas fa-image me-1"></i> Image Analysis
+                </span>
+                <span class="badge bg-light text-dark">
+                    <i class="fas fa-file-pdf me-1"></i> PDF Support
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area" id="chatArea">
+            <!-- Welcome Section (shown initially) -->
+            <div class="welcome-section" id="welcomeSection">
+                <div class="welcome-icon">
+                    <i class="fas fa-comment-medical"></i>
+                </div>
+                <h2>Welcome to Health AI Assistant 👋</h2>
+                <p class="text-muted">I'm your AI health companion. I can help you with health questions, analyze medical documents, and provide wellness guidance.</p>
+                
+                <div class="capabilities-grid">
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-comment-medical"></i>
+                        </div>
+                        <h5>Health Q&A</h5>
+                        <p class="text-muted small">Ask about symptoms, conditions, or treatments</p>
+                    </div>
+                    
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-file-medical-alt"></i>
+                        </div>
+                        <h5>Document Analysis</h5>
+                        <p class="text-muted small">Upload lab reports or prescriptions for explanation</p>
+                    </div>
+                    
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-apple-alt"></i>
+                        </div>
+                        <h5>Wellness Tips</h5>
+                        <p class="text-muted small">Nutrition, exercise, and mental health advice</p>
+                    </div>
+                    
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <h5>Medication Info</h5>
+                        <p class="text-muted small">Learn about medications and side effects</p>
+                    </div>
+                </div>
+                
+                <div class="quick-questions">
+                    <p class="w-100 mb-2">Try asking:</p>
+                    <button class="quick-btn" onclick="askQuestion('What are common symptoms of diabetes?')">
+                        Diabetes symptoms?
+                    </button>
+                    <button class="quick-btn" onclick="askQuestion('How to lower blood pressure naturally?')">
+                        Lower blood pressure?
+                    </button>
+                    <button class="quick-btn" onclick="askQuestion('What is a healthy BMI range?')">
+                        Healthy BMI?
+                    </button>
+                    <button class="quick-btn" onclick="askQuestion('Tips for better sleep')">
+                        Better sleep tips
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Messages Container -->
+            <div class="message-container" id="messageContainer" style="display: none;">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <!-- File Upload Area (hidden by default) -->
+            <div class="file-upload-area" id="fileUploadArea" style="display: none;">
+                <div class="file-upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h5>Upload Medical Document</h5>
+                <p class="text-muted">Drag & drop or click to upload images or PDFs</p>
+                <p class="small text-muted mb-3">Supports: JPG, PNG, PDF (Max 10MB)</p>
+                <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.pdf" style="display: none;">
+                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-folder-open me-2"></i> Browse Files
+                </button>
+                
+                <div class="file-preview" id="filePreview">
+                    <div class="file-preview-item" id="filePreviewItem">
+                        <i class="fas fa-file" id="fileIcon"></i>
+                        <div style="flex: 1;">
+                            <strong id="fileName"></strong>
+                            <div class="small text-muted" id="fileSize"></div>
+                        </div>
+                        <button class="btn btn-sm btn-danger" onclick="clearFile()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <footer class="input-area">
+            <div class="input-container">
+                <button class="file-upload-btn" id="fileUploadBtn" onclick="toggleFileUpload()" title="Upload file">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                
+                <input type="text" 
+                       class="message-input" 
+                       id="messageInput" 
+                       placeholder="Ask about health, upload documents, or get wellness advice..."
+                       onkeypress="handleKeyPress(event)">
+                
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            
+            <!-- Features Menu -->
+            <div class="features-menu">
+                <button class="feature-btn" onclick="showEmergencyInfo()">
+                    <i class="fas fa-ambulance"></i>
+                    <span class="tooltip">Emergency Info</span>
+                </button>
+                <button class="feature-btn" onclick="clearChat()">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="tooltip">Clear Chat</span>
+                </button>
+                <button class="feature-btn" onclick="exportChat()">
+                    <i class="fas fa-download"></i>
+                    <span class="tooltip">Export Chat</span>
+                </button>
+            </div>
+            
+            <!-- Disclaimer -->
+            <div class="disclaimer">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Important:</strong> This AI assistant provides health information only, not medical advice. 
+                Always consult healthcare professionals for diagnoses. In emergencies, call local emergency services.
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chatbot JavaScript -->
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>
