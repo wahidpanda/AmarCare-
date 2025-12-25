@@ -1,9 +1,15 @@
 ## **AmarCare- AI-Powered Health Assistant**
-https://img.shields.io/badge/HealthPredict-Pro-brightgreen
-https://img.shields.io/badge/Python-3.8%252B-blue
-https://img.shields.io/badge/Flask-2.3.2-lightgrey
-https://img.shields.io/badge/Gemini-AI-orange
-https://img.shields.io/badge/License-MIT-green
+ # HealthPredict Pro is an intelligent healthcare platform that combines machine learning disease prediction with Gemini AI-powered medical assistance. The system helps users assess their risk for diabetes, heart disease, and kidney disease while providing instant health information through an AI chatbot.
+ <https://img.shields.io/badge/AmarCare-brightgreen>
+
+## App Demo
+
+<img width="1897" height="972" alt="image" src="https://github.com/user-attachments/assets/bcfd0932-3339-4755-9430-107aeabfb873" />
+<img width="1742" height="926" alt="image" src="https://github.com/user-attachments/assets/08711bd0-3dbe-468a-8331-28f72e66d662" />
+<img width="1740" height="947" alt="image" src="https://github.com/user-attachments/assets/71b2de44-bb11-4b2c-a13e-84d689d65d40" />
+![Uploading image.png…]()
+
+
 
 ## 📋 Table of Contents
 🌟 Overview
@@ -246,10 +252,6 @@ islamoahodil12@gmail.com
 
 <div align="center">
 🌟 Made with ❤️ for Better Healthcare
-https://img.shields.io/github/stars/yourusername/healthpredict-pro?style=social
-https://img.shields.io/github/forks/yourusername/healthpredict-pro?style=social
-https://img.shields.io/github/issues/yourusername/healthpredict-pro
-
 Empowering Health Decisions Through AI & Machine Learning
 
 </div>
